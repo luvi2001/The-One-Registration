@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Area {
+  DEMATAGODA
+  KURULOPANA
+  VATALA
+  VALAVATA
+  KOTEJENA
+}
+
+model Camper {
+  id           String   @id @default(uuid())
+  fullName     String
+  age          Int
+  area         Area
+  mobileNumber String
+  school       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([area])
+  @@index([fullName])
+}
