@@ -4,6 +4,7 @@
   "description": "Backend API for the camp registration system",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
