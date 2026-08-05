@@ -27,7 +27,7 @@ export class CampersService {
         { address: { contains: query.search, mode: 'insensitive' } },
         { parentsName: { contains: query.search, mode: 'insensitive' } },
         { religion: { contains: query.search, mode: 'insensitive' } },
-        { invitedBy: { contains: query.search, mode: 'insensitive' } },
+        { invitedBy: { contains: query.search, mode: 'insensitive' }},
       ];
     }
 
