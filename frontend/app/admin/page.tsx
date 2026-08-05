@@ -175,6 +175,8 @@ export default function AdminPage() {
                       <div><span className="font-semibold text-ink-900">Parent:</span> {c.parentsName}</div>
                       <div><span className="font-semibold text-ink-900">Parent tel:</span> {c.telephoneNumberOfParents}</div>
                       <div><span className="font-semibold text-ink-900">Religion:</span> {c.religion}</div>
+                      <div><span className="font-semibold text-ink-900">Invited by:</span> {c.invitedBy}</div>
+                      <div><span className="font-semibold text-ink-900">Free days:</span> {c.availableDays.join(', ')}</div>
                     </div>
                   )}
 
@@ -230,6 +232,8 @@ export default function AdminPage() {
                           <div><span className="font-semibold text-ink-900">Parent:</span> {c.parentsName}</div>
                           <div><span className="font-semibold text-ink-900">Parent tel:</span> {c.telephoneNumberOfParents}</div>
                           <div><span className="font-semibold text-ink-900">Religion:</span> {c.religion}</div>
+                          <div><span className="font-semibold text-ink-900">Invited by:</span> {c.invitedBy}</div>
+                          <div><span className="font-semibold text-ink-900">Free days:</span> {c.availableDays.join(', ')}</div>
                         </div>
                       </td>
                       <td className="px-5 py-3 text-ink-700">

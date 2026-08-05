@@ -1,5 +1,7 @@
 import { Area } from '@prisma/client';
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsDateString,
   IsEnum,
   IsInt,
@@ -62,4 +64,14 @@ export class CreateCamperDto {
   @IsNotEmpty({ message: 'Religion is required' })
   @MaxLength(50)
   religion: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Please tell us who invited you' })
+  @MaxLength(100)
+  invitedBy: string;
+
+  @IsArray({ message: 'Please select at least one free day' })
+  @ArrayNotEmpty({ message: 'Please select at least one free day' })
+  @IsString({ each: true })
+  availableDays: string[];
 }

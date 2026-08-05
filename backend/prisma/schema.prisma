@@ -16,20 +16,22 @@ enum Area {
 }
 
 model Camper {
-  id           String   @id @default(uuid())
-  fullName     String
-  age          Int
-  area         Area
-  mobileNumber String
-  school       String
-  dateOfBirth  String
-  gender       String
-  address      String
-  parentsName  String
+  id                        String   @id @default(uuid())
+  fullName                  String
+  age                       Int
+  area                      Area
+  mobileNumber              String
+  school                    String
+  dateOfBirth               String
+  gender                    String
+  address                   String
+  parentsName               String
   telephoneNumberOfParents String
-  religion     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  religion                  String
+  invitedBy                 String   @default("")
+  availableDays             String[] @default([])
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 
   @@index([area])
   @@index([fullName])

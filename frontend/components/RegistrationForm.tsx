@@ -20,6 +20,8 @@ export default function RegistrationForm() {
   const [parentsName, setParentsName] = useState('');
   const [telephoneNumberOfParents, setTelephoneNumberOfParents] = useState('');
   const [religion, setReligion] = useState('');
+  const [invitedBy, setInvitedBy] = useState('');
+  const [availableDays, setAvailableDays] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -35,12 +37,27 @@ export default function RegistrationForm() {
     setParentsName('');
     setTelephoneNumberOfParents('');
     setReligion('');
+    setInvitedBy('');
+    setAvailableDays([]);
+  };
+
+  const handleDayToggle = (day: string) => {
+    setAvailableDays((current) =>
+      current.includes(day) ? current.filter((item) => item !== day) : [...current, day],
+    );
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
     setErrorMessage('');
+
+    if (availableDays.length === 0) {
+      setStatus('error');
+      setErrorMessage('Please select at least one free day.');
+      return;
+    }
+
     try {
       await registerCamper({
         fullName: fullName.trim(),
@@ -54,6 +71,8 @@ export default function RegistrationForm() {
         parentsName: parentsName.trim(),
         telephoneNumberOfParents: telephoneNumberOfParents.trim(),
         religion: religion.trim(),
+        invitedBy: invitedBy.trim(),
+        availableDays,
       });
       setStatus('success');
       resetForm();
@@ -87,11 +106,6 @@ export default function RegistrationForm() {
 
   return (
     <div className="rise-in relative z-10 w-full max-w-md">
-      <div className="pennant-row -mb-1">
-        {PENNANT_COLORS.map((c, i) => (
-          <span key={i} className="pennant" style={{ backgroundColor: c }} />
-        ))}
-      </div>
       <div className="grain relative overflow-hidden rounded-b-2xl bg-canvas-50 px-7 pb-8 shadow-canvas">
         <div className="text-center">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-ember-600 mt-4">Camp registration</p>
@@ -257,6 +271,45 @@ export default function RegistrationForm() {
             />
           </Field>
 
+          <Field label="Who invited you?" htmlFor="invitedBy">
+            <input
+              id="invitedBy"
+              required
+              maxLength={100}
+              value={invitedBy}
+              onChange={(e) => setInvitedBy(e.target.value)}
+              placeholder="e.g. Mr. Silva"
+              className="camp-input"
+            />
+          </Field>
+
+          <div>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-pine-700">
+              Free days available
+            </label>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
+                const checked = availableDays.includes(day);
+                return (
+                  <label
+                    key={day}
+                    className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
+                      checked ? 'border-ember-500 bg-ember-500/10 text-pine-900' : 'border-[#eee2c4] bg-white text-ink-700'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => handleDayToggle(day)}
+                      className="h-4 w-4 rounded border-[#eee2c4] text-ember-500 focus:ring-ember-500"
+                    />
+                    <span>{day}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
           {status === 'error' && (
             <p role="alert" className="rounded-lg bg-ember-500/10 px-3 py-2 text-sm font-medium text-ember-600">
               {errorMessage}
@@ -266,7 +319,7 @@ export default function RegistrationForm() {
           <button
             type="submit"
             disabled={status === 'submitting'}
-            className="mt-2 w-full rounded-full bg-ember-500 py-3.5 font-display text-xl tracking-wide text-canvas-50 transition hover:bg-ember-600 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-2 w-full rounded-full bg-red-800 py-3.5 font-display text-xl tracking-wide text-canvas-50 transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {status === 'submitting' ? 'Saving…' : 'Register Camper'}
           </button>

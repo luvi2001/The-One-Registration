@@ -21,6 +21,8 @@ export interface Camper {
   parentsName: string;
   telephoneNumberOfParents: string;
   religion: string;
+  invitedBy: string;
+  availableDays: string[];
   createdAt: string;
 }
 
@@ -36,6 +38,8 @@ export interface CreateCamperInput {
   parentsName: string;
   telephoneNumberOfParents: string;
   religion: string;
+  invitedBy: string;
+  availableDays: string[];
 }
 
 export function areaLabel(value: string): string {
