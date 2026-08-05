@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCamperDto } from './dto/create-camper.dto';
@@ -8,8 +8,23 @@ import { QueryCamperDto } from './dto/query-camper.dto';
 export class CampersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateCamperDto) {
-    return this.prisma.camper.create({ data: dto });
+  async create(dto: CreateCamperDto) {
+    try {
+      return await this.prisma.camper.create({
+        data: {
+          ...dto,
+          invitedBy: dto.invitedBy ?? '',
+          availableDays: dto.availableDays ?? [],
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new InternalServerErrorException(
+          `Database error while saving camper: ${error.message}`,
+        );
+      }
+      throw new InternalServerErrorException('Unable to save camper registration.');
+    }
   }
 
   findAll(query: QueryCamperDto) {
@@ -27,7 +42,7 @@ export class CampersService {
         { address: { contains: query.search, mode: 'insensitive' } },
         { parentsName: { contains: query.search, mode: 'insensitive' } },
         { religion: { contains: query.search, mode: 'insensitive' } },
-        { invitedBy: { contains: query.search, mode: 'insensitive' }},
+        { invitedBy: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
