@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import * as XLSX from 'xlsx';
 import { deleteCamper, fetchCampers, fetchStats, updateCamperStatus, CamperStats } from '@/lib/api';
 import { AREAS, AreaValue, Camper, areaLabel } from '@/lib/types';
 
@@ -53,6 +54,35 @@ export default function AdminPage() {
   const busArrivedCount = useMemo(() => campers.filter((c) => c.busArrived).length, [campers]);
   const campArrivedCount = useMemo(() => campers.filter((c) => c.campArrived).length, [campers]);
 
+  function handleExportExcel() {
+    if (campers.length === 0) {
+      alert('There are no camper records to export.');
+      return;
+    }
+
+    const rows = campers.map((c) => ({
+      Name: c.fullName,
+      Age: c.age,
+      Area: areaLabel(c.area),
+      Mobile: c.mobileNumber,
+      School: c.school,
+      'Date of Birth': c.dateOfBirth,
+      Gender: c.gender,
+      Address: c.address,
+      'Parent / guardian name': c.parentsName,
+      'Parent telephone': c.telephoneNumberOfParents,
+      Religion: c.religion,
+      'Invited by': c.invitedBy,
+      'Free days': c.availableDays.join(', '),
+      'Registered at': new Date(c.createdAt).toLocaleString(),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Campers');
+    XLSX.writeFile(workbook, `campers-export-${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
   async function handleDelete(id: string) {
     if (!confirm('Remove this registration? This cannot be undone.')) return;
     setDeletingId(id);
@@ -90,21 +120,32 @@ export default function AdminPage() {
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
 
         <div className="mb-6 flex flex-col gap-3 sm:gap-4">
-          <div className="relative w-full sm:max-w-xs">
-            <svg
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-pine-700/60"
-              viewBox="0 0 24 24"
-              fill="none"
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative w-full sm:max-w-xs">
+              <svg
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-pine-700/60"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+                <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name, school, or mobile"
+                className="w-full rounded-full border-2 border-canvas-200 bg-white py-2.5 pl-9 pr-4 text-sm text-ink-900 focus:border-ember-500 focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              disabled={state !== 'ready' || campers.length === 0}
+              className="inline-flex items-center justify-center rounded-full bg-pine-900 px-4 py-2.5 text-sm font-semibold text-canvas-50 transition hover:bg-pine-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-              <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name, school, or mobile"
-              className="w-full rounded-full border-2 border-canvas-200 bg-white py-2.5 pl-9 pr-4 text-sm text-ink-900 focus:border-ember-500 focus:outline-none"
-            />
+              Export to Excel
+            </button>
           </div>
 
         <div className="mb-6 grid gap-3 sm:grid-cols-2">
