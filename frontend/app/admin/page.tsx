@@ -50,6 +50,9 @@ export default function AdminPage() {
     return map;
   }, [stats]);
 
+  const busArrivedCount = useMemo(() => campers.filter((c) => c.busArrived).length, [campers]);
+  const campArrivedCount = useMemo(() => campers.filter((c) => c.campArrived).length, [campers]);
+
   async function handleDelete(id: string) {
     if (!confirm('Remove this registration? This cannot be undone.')) return;
     setDeletingId(id);
@@ -85,6 +88,7 @@ export default function AdminPage() {
       </header>
 
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+
         <div className="mb-6 flex flex-col gap-3 sm:gap-4">
           <div className="relative w-full sm:max-w-xs">
             <svg
@@ -103,6 +107,17 @@ export default function AdminPage() {
             />
           </div>
 
+        <div className="mb-6 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 shadow-sm">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-700">Bus arrived</p>
+            <p className="mt-1 text-2xl font-semibold text-amber-900">{busArrivedCount}</p>
+          </div>
+          <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 shadow-sm">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-sky-700">Camp arrived</p>
+            <p className="mt-1 text-2xl font-semibold text-sky-900">{campArrivedCount}</p>
+          </div>
+        </div>
+        
           {/* Filter chips: horizontal scroll on mobile instead of wrapping */}
           <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
             <FilterChip
