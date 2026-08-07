@@ -23,6 +23,8 @@ export interface Camper {
   religion: string;
   invitedBy: string;
   availableDays: string[];
+  busArrived: boolean;
+  campArrived: boolean;
   createdAt: string;
 }
 

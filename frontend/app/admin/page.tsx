@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { deleteCamper, fetchCampers, fetchStats, CamperStats } from '@/lib/api';
+import { deleteCamper, fetchCampers, fetchStats, updateCamperStatus, CamperStats } from '@/lib/api';
 import { AREAS, AreaValue, Camper, areaLabel } from '@/lib/types';
 
 type LoadState = 'loading' | 'ready' | 'error';
@@ -60,6 +60,15 @@ export default function AdminPage() {
       alert('Could not remove this registration. Please try again.');
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  async function handleStatusUpdate(id: string, updates: { busArrived?: boolean; campArrived?: boolean }) {
+    try {
+      await updateCamperStatus(id, updates);
+      await load();
+    } catch {
+      alert('Could not update camper status.');
     }
   }
 
@@ -180,14 +189,34 @@ export default function AdminPage() {
                     </div>
                   )}
 
-                  <div className="mt-3 flex justify-end border-t border-canvas-100 pt-3">
-                    <button
-                      onClick={() => handleDelete(c.id)}
-                      disabled={deletingId === c.id}
-                      className="text-xs font-semibold text-ember-600 hover:underline disabled:opacity-50"
-                    >
-                      {deletingId === c.id ? 'Removing…' : 'Remove'}
-                    </button>
+                  <div className="mt-3 space-y-2 border-t border-canvas-100 pt-3">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleStatusUpdate(c.id, { busArrived: !c.busArrived })}
+                        className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                          c.busArrived ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-800'
+                        }`}
+                      >
+                        {c.busArrived ? 'Bus arrived' : 'Mark bus arrived'}
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate(c.id, { campArrived: !c.campArrived })}
+                        className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                          c.campArrived ? 'bg-emerald-600 text-white' : 'bg-sky-100 text-sky-800'
+                        }`}
+                      >
+                        {c.campArrived ? 'Camp arrived' : 'Mark camp arrived'}
+                      </button>
+                    </div>
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => handleDelete(c.id)}
+                        disabled={deletingId === c.id}
+                        className="text-xs font-semibold text-ember-600 hover:underline disabled:opacity-50"
+                      >
+                        {deletingId === c.id ? 'Removing…' : 'Remove'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -240,13 +269,33 @@ export default function AdminPage() {
                         {new Date(c.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-5 py-3 text-right">
-                        <button
-                          onClick={() => handleDelete(c.id)}
-                          disabled={deletingId === c.id}
-                          className="text-xs font-semibold text-ember-600 hover:underline disabled:opacity-50"
-                        >
-                          {deletingId === c.id ? 'Removing…' : 'Remove'}
-                        </button>
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="flex flex-wrap justify-end gap-2">
+                            <button
+                              onClick={() => handleStatusUpdate(c.id, { busArrived: !c.busArrived })}
+                              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                                c.busArrived ? 'bg-emerald-600 text-white' : 'bg-amber-100 text-amber-800'
+                              }`}
+                            >
+                              {c.busArrived ? 'Bus arrived' : 'Mark bus arrived'}
+                            </button>
+                            <button
+                              onClick={() => handleStatusUpdate(c.id, { campArrived: !c.campArrived })}
+                              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                                c.campArrived ? 'bg-emerald-600 text-white' : 'bg-sky-100 text-sky-800'
+                              }`}
+                            >
+                              {c.campArrived ? 'Camp arrived' : 'Mark camp arrived'}
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => handleDelete(c.id)}
+                            disabled={deletingId === c.id}
+                            className="text-xs font-semibold text-ember-600 hover:underline disabled:opacity-50"
+                          >
+                            {deletingId === c.id ? 'Removing…' : 'Remove'}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

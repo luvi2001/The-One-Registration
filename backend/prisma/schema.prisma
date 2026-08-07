@@ -30,6 +30,8 @@ model Camper {
   religion                  String
   invitedBy                 String   @default("")
   availableDays             String[] @default([])
+  busArrived                Boolean  @default(false)
+  campArrived               Boolean  @default(false)
   createdAt                 DateTime @default(now())
   updatedAt                 DateTime @updatedAt
 

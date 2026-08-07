@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -33,5 +34,10 @@ export class CampersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.campersService.remove(id);
+  }
+
+  @Patch(':id/status')
+  updateStatus(@Param('id') id: string, @Body() body: { busArrived?: boolean; campArrived?: boolean }) {
+    return this.campersService.updateStatus(id, body);
   }
 }

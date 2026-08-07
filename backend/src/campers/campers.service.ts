@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCamperDto } from './dto/create-camper.dto';
@@ -69,5 +69,17 @@ export class CampersService {
 
   remove(id: string) {
     return this.prisma.camper.delete({ where: { id } });
+  }
+
+  async updateStatus(id: string, data: { busArrived?: boolean; campArrived?: boolean }) {
+    const camper = await this.prisma.camper.findUnique({ where: { id } });
+    if (!camper) {
+      throw new NotFoundException('Camper not found.');
+    }
+
+    return this.prisma.camper.update({
+      where: { id },
+      data,
+    });
   }
 }

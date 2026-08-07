@@ -58,3 +58,15 @@ export async function deleteCamper(id: string): Promise<void> {
     throw new Error('Could not delete this registration.');
   }
 }
+
+export async function updateCamperStatus(
+  id: string,
+  updates: { busArrived?: boolean; campArrived?: boolean },
+): Promise<Camper> {
+  const res = await fetch(`${API_URL}/campers/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  return handle<Camper>(res);
+}
