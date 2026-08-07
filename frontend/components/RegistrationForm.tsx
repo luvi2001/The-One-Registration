@@ -215,7 +215,6 @@ export default function RegistrationForm() {
                 </option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </select>
             </Field>
           </div>
@@ -241,7 +240,7 @@ export default function RegistrationForm() {
                 maxLength={100}
                 value={parentsName}
                 onChange={(e) => setParentsName(e.target.value)}
-                placeholder="e.g. Sunil Perera"
+                placeholder="e.g. John"
                 className="camp-input"
               />
             </Field>
@@ -266,7 +265,7 @@ export default function RegistrationForm() {
               maxLength={50}
               value={religion}
               onChange={(e) => setReligion(e.target.value)}
-              placeholder="e.g. Buddhist"
+              placeholder="e.g. Christian"
               className="camp-input"
             />
           </Field>
