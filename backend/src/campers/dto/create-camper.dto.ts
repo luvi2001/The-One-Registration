@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   Max,
@@ -64,6 +65,11 @@ export class CreateCamperDto {
   @IsNotEmpty({ message: 'Religion is required' })
   @MaxLength(50)
   religion: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(250)
+  medicalConditions: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Please tell us who invited you' })

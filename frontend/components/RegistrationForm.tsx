@@ -40,6 +40,20 @@ const CONFIRMATION_ACK_COPY: Record<ConfirmationLanguage, string> = {
   sinhala: 'මගේ පුතා / දියණිය මෙම කඳවුරට යාමට අවසර දෙමි.',
 };
 
+const CAMP_FEE = 'Rs. 3,000';
+const CAMP_DATES = 'August 25 – 28';
+const CAMP_LOCATION = 'Madampe';
+const THINGS_TO_BRING = [
+  'National Identity Card / Birth Certificate copy',
+  'Bedsheet, pillow & mosquito net',
+  'Personal toiletries & towel',
+  'Water bottle & torch',
+  'Bible & notebook',
+  'Medication (if any) with instructions',
+];
+const DRESS_CODE = 'Modest, comfortable casual wear. White t-shirt required for the closing day.';
+const WHATSAPP_LINK = 'https://chat.whatsapp.com/HAS9I5ITZ5TDmk0XVawAjS';
+
 export default function RegistrationForm() {
   const [fullName, setFullName] = useState('');
   const [age, setAge] = useState('');
@@ -52,6 +66,7 @@ export default function RegistrationForm() {
   const [parentsName, setParentsName] = useState('');
   const [telephoneNumberOfParents, setTelephoneNumberOfParents] = useState('');
   const [religion, setReligion] = useState('');
+  const [medicalConditions, setMedicalConditions] = useState('');
   const [invitedBy, setInvitedBy] = useState('');
   const [availableDays, setAvailableDays] = useState<string[]>([]);
   const [confirmationLanguage, setConfirmationLanguage] = useState<ConfirmationLanguage | ''>('');
@@ -71,6 +86,7 @@ export default function RegistrationForm() {
     setParentsName('');
     setTelephoneNumberOfParents('');
     setReligion('');
+    setMedicalConditions('');
     setInvitedBy('');
     setAvailableDays([]);
     setConfirmationLanguage('');
@@ -107,6 +123,7 @@ export default function RegistrationForm() {
         parentsName: parentsName.trim(),
         telephoneNumberOfParents: telephoneNumberOfParents.trim(),
         religion: religion.trim(),
+        medicalConditions: medicalConditions.trim(),
         invitedBy: invitedBy.trim(),
         availableDays,
       });
@@ -120,19 +137,60 @@ export default function RegistrationForm() {
 
   if (status === 'success') {
     return (
-      <div className="rise-in relative z-10 w-full max-w-md rounded-2xl bg-canvas-50 p-8 text-center shadow-canvas">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pine-700 text-canvas-50">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-            <path d="M5 12.5 10 17 19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+      <div className="rise-in relative z-10 w-full max-w-md rounded-2xl bg-canvas-50 p-8 shadow-canvas">
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pine-700 text-canvas-50">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12.5 10 17 19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h2 className="font-display text-3xl text-pine-900">You&apos;re on the list!</h2>
+          <p className="mt-2 text-ink-700">The camper is registered. See you at camp!</p>
         </div>
-        <h2 className="font-display text-3xl text-pine-900">You&apos;re on the list!</h2>
-        <p className="mt-2 text-ink-700">
-          The camper is registered. See you at camp!
-        </p>
+
+        <div className="mt-6 space-y-4 text-left">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl border border-[#eee2c4] bg-white px-4 py-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-pine-700">Camp fee</p>
+              <p className="mt-1 font-display text-xl text-pine-900">{CAMP_FEE}</p>
+            </div>
+            <div className="rounded-xl border border-[#eee2c4] bg-white px-4 py-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-pine-700">Camp dates</p>
+              <p className="mt-1 font-display text-xl text-pine-900">{CAMP_DATES}</p>
+              <p className="text-xs text-ink-700">{CAMP_LOCATION}</p>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-[#eee2c4] bg-white px-4 py-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-pine-700">Things to bring</p>
+            <ul className="mt-2 space-y-1 text-sm text-ink-700">
+              {THINGS_TO_BRING.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span className="text-ember-600">•</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-xl border border-[#eee2c4] bg-white px-4 py-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-pine-700">Dress code</p>
+            <p className="mt-1 text-sm text-ink-700">{DRESS_CODE}</p>
+          </div>
+
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-full bg-pine-700 py-3 font-semibold text-canvas-50 transition hover:bg-pine-800"
+          >
+            Join our WhatsApp community
+          </a>
+        </div>
+
         <button
           onClick={() => setStatus('idle')}
-          className="mt-6 rounded-full bg-ember-500 px-6 py-3 font-semibold text-canvas-50 transition hover:bg-ember-600"
+          className="mt-6 w-full rounded-full bg-ember-500 px-6 py-3 font-semibold text-canvas-50 transition hover:bg-ember-600"
         >
           Register another camper
         </button>
@@ -151,11 +209,6 @@ export default function RegistrationForm() {
           <p className="mt-2 text-sm text-ink-700">
             Fill in a camper&apos;s details below to save their spot.
           </p>
-        </div>
-
-        <div className="mt-6 rounded-2xl border border-ember-500/20 bg-ember-500/10 px-4 py-3 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-ember-700">Camp fee</p>
-          <p className="mt-1 font-display text-3xl text-pine-900">Rs. 3,000</p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-7 space-y-4">
@@ -311,6 +364,18 @@ export default function RegistrationForm() {
             />
           </Field>
 
+          <Field label="Medical conditions" htmlFor="medicalConditions">
+            <textarea
+              id="medicalConditions"
+              maxLength={250}
+              rows={3}
+              value={medicalConditions}
+              onChange={(e) => setMedicalConditions(e.target.value)}
+              placeholder="e.g. wheeze, asthma, allergies, ongoing medication, or None"
+              className="camp-input"
+            />
+          </Field>
+
           <Field label="Who invited you?" htmlFor="invitedBy">
             <input
               id="invitedBy"
@@ -322,6 +387,32 @@ export default function RegistrationForm() {
               className="camp-input"
             />
           </Field>
+
+          <div>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-pine-700">
+              Free days available for the weekly meet-up
+            </label>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
+                const checked = availableDays.includes(day);
+                return (
+                  <label
+                    key={day}
+                    className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${checked ? 'border-ember-500 bg-ember-500/10 text-pine-900' : 'border-[#eee2c4] bg-white text-ink-700'
+                      }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => handleDayToggle(day)}
+                      className="h-4 w-4 rounded border-[#eee2c4] text-ember-500 focus:ring-ember-500"
+                    />
+                    <span>{day}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="rounded-2xl border border-[#eee2c4] bg-white px-4 py-4">
             <div className="flex items-start justify-between gap-3">
@@ -341,8 +432,8 @@ export default function RegistrationForm() {
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               <label
                 className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${confirmationLanguage === 'tamil'
-                    ? 'border-ember-500 bg-ember-500/10 text-pine-900'
-                    : 'border-[#eee2c4] bg-canvas-50 text-ink-700'
+                  ? 'border-ember-500 bg-ember-500/10 text-pine-900'
+                  : 'border-[#eee2c4] bg-canvas-50 text-ink-700'
                   }`}
               >
                 <input
@@ -359,8 +450,8 @@ export default function RegistrationForm() {
 
               <label
                 className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${confirmationLanguage === 'sinhala'
-                    ? 'border-ember-500 bg-ember-500/10 text-pine-900'
-                    : 'border-[#eee2c4] bg-canvas-50 text-ink-700'
+                  ? 'border-ember-500 bg-ember-500/10 text-pine-900'
+                  : 'border-[#eee2c4] bg-canvas-50 text-ink-700'
                   }`}
               >
                 <input
@@ -409,31 +500,6 @@ export default function RegistrationForm() {
             </label>
           </div>
 
-          <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-pine-700">
-              Free days available
-            </label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
-                const checked = availableDays.includes(day);
-                return (
-                  <label
-                    key={day}
-                    className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${checked ? 'border-ember-500 bg-ember-500/10 text-pine-900' : 'border-[#eee2c4] bg-white text-ink-700'
-                      }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => handleDayToggle(day)}
-                      className="h-4 w-4 rounded border-[#eee2c4] text-ember-500 focus:ring-ember-500"
-                    />
-                    <span>{day}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
 
           {status === 'error' && (
             <p role="alert" className="rounded-lg bg-ember-500/10 px-3 py-2 text-sm font-medium text-ember-600">

@@ -72,6 +72,7 @@ export default function AdminPage() {
       'Parent / guardian name': c.parentsName,
       'Parent telephone': c.telephoneNumberOfParents,
       Religion: c.religion,
+      'Medical conditions': c.medicalConditions || 'None',
       'Invited by': c.invitedBy,
       'Free days': c.availableDays.join(', '),
       'Registered at': new Date(c.createdAt).toLocaleString(),
@@ -240,6 +241,7 @@ export default function AdminPage() {
                       <div><span className="font-semibold text-ink-900">Parent:</span> {c.parentsName}</div>
                       <div><span className="font-semibold text-ink-900">Parent tel:</span> {c.telephoneNumberOfParents}</div>
                       <div><span className="font-semibold text-ink-900">Religion:</span> {c.religion}</div>
+                      <div><span className="font-semibold text-ink-900">Medical conditions:</span> {c.medicalConditions || 'None'}</div>
                       <div><span className="font-semibold text-ink-900">Invited by:</span> {c.invitedBy}</div>
                       <div><span className="font-semibold text-ink-900">Free days:</span> {c.availableDays.join(', ')}</div>
                     </div>
@@ -317,6 +319,7 @@ export default function AdminPage() {
                           <div><span className="font-semibold text-ink-900">Parent:</span> {c.parentsName}</div>
                           <div><span className="font-semibold text-ink-900">Parent tel:</span> {c.telephoneNumberOfParents}</div>
                           <div><span className="font-semibold text-ink-900">Religion:</span> {c.religion}</div>
+                          <div><span className="font-semibold text-ink-900">Medical conditions:</span> {c.medicalConditions || 'None'}</div>
                           <div><span className="font-semibold text-ink-900">Invited by:</span> {c.invitedBy}</div>
                           <div><span className="font-semibold text-ink-900">Free days:</span> {c.availableDays.join(', ')}</div>
                         </div>

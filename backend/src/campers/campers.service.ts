@@ -14,6 +14,7 @@ export class CampersService {
         data: {
           ...dto,
           invitedBy: dto.invitedBy ?? '',
+          medicalConditions: dto.medicalConditions ?? '',
           availableDays: dto.availableDays ?? [],
         },
       });

@@ -28,6 +28,7 @@ model Camper {
   parentsName               String
   telephoneNumberOfParents String
   religion                  String
+  medicalConditions         String   @default("")
   invitedBy                 String   @default("")
   availableDays             String[] @default([])
   busArrived                Boolean  @default(false)

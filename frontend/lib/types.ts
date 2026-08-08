@@ -21,6 +21,7 @@ export interface Camper {
   parentsName: string;
   telephoneNumberOfParents: string;
   religion: string;
+  medicalConditions: string;
   invitedBy: string;
   availableDays: string[];
   busArrived: boolean;
@@ -40,6 +41,7 @@ export interface CreateCamperInput {
   parentsName: string;
   telephoneNumberOfParents: string;
   religion: string;
+  medicalConditions: string;
   invitedBy: string;
   availableDays: string[];
 }
