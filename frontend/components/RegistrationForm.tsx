@@ -8,6 +8,38 @@ const PENNANT_COLORS = ['#E8743B', '#F4B942', '#3D7257', '#E8743B', '#F4B942', '
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
+type ConfirmationLanguage = 'tamil' | 'sinhala';
+
+const CONFIRMATION_COPY: Record<ConfirmationLanguage, { greeting: string; paragraphs: string[]; closing: string; signature: string }> = {
+  tamil: {
+    greeting: 'கனம் பெற்றோர் / பாதுகாவலருக்கு,',
+    paragraphs: [
+      'கிறிஸ்துவுக்காக இளைஞர் நிறுவனமானது அரச சார்பற்ற மற்றும் இலாப நோக்கமற்ற ஓர் கிறிஸ்தவ நிறுவனமாகும். இந் நிறுவனத்தின் மூலம் நாம் இளைஞர்களின் உடல், உள, ஆன்மிக ரீதியில் தாக்கத்தை ஏற்படுத்தி அவர்களை சிறந்த தலைவர்களாகாக்குவது எமது நோக்கமாகும்.',
+      'இந் நிறுவனத்தின் ஒரு பிரிவான பாடசாலை ஊழியமானது பாடசாலை மாணவர்களின் கல்வி சார்பான பல நடவடிக்கைகளில் ஈடுபடுகிறது. அவர்களுடைய உடல், உள மற்றும் ஆன்மிக வாழ்வியலை விருத்தி செய்யும் பொருட்டும் நல் விழுமியங்களை கற்றுக்கொடுக்கும் நோக்குடனும் இம் முகாமானது ஏற்பாடு செய்யப்பட்டுள்ளது.',
+      'இம் முகாமானது ஆகஸ்ட் மாதம் 25ம் திகதி தொடக்கம் 28ம் திகதி வரை மாதம்பே பிரதேசத்தில் ஏற்பாடு செய்யப்பட்டுள்ளது. இந்த நாட்களில் பங்கு கொள்ளும் மாணவர்களின் பாதுகாப்பை நாங்கள் முழுமையாக உறுதிப்படுத்துகிறோம்.',
+      'அத்தோடு இது தொடர்பான மேலதிக தகவல்களை பெற்றுக்கொள்ள எங்களை தொடர்புகொள்ளுமாறு கேட்டுக்கொள்வதோடு அவர்களின் வருகையை உறுதிப்படுத்துமாறும் தாழ்மையோடு கேட்டுக்கொள்கிறோம்.',
+    ],
+    closing: 'இப்படிக்கு,',
+    signature: 'P.அருள் பிரகாஷ்\n(பாடசாலை ஊழிய இயக்குனர்)',
+  },
+  sinhala: {
+    greeting: 'ගරු මව්පියන් / භාරකරුවන් වෙත,',
+    paragraphs: [
+      'ක්‍රිස්තුස්වහන්සේ සඳහා වන යෞවන ආයතනය යනු රජයේ නොවන සහ ලාභ නොලබන ක්‍රිස්තියානි ආයතනයකි. මෙම ආයතනය හරහා අපි තරුණ තරුණියන්ගේ ශාරීරික, මානසික සහ අධ්‍යාත්මික තත්ත්වයන් වර්ධනය කරමින් ඔවුන් විශිෂ්ට නායකයන් බවට පත් කිරීම අපගේ අරමුණ වේ.',
+      'මෙම ආයතනයේ පාසල් සේවය නම් අංශය පාසල් සිසුන්ගේ අධ්‍යාපනයට අදාළ බොහෝ ක්‍රියාකාරකම්වල නිරත වේ. ඔවුන්ගේ ශාරීරික, මානසික සහ අධ්‍යාත්මික ජීවිත සංවර්ධනය කිරීමේ අරමුණින් සහ යහපත් වටිනාකම් උගන්වමින් මෙම කඳවුර සංවිධානය කර ඇත.',
+      'මෙම කඳවුර අගෝස්තු මස 25වන දින සිට 28වන දින දක්වා Madampe ප්‍රදේශයේදී පැවැත්වේ. මෙම දිනවලදී සහභාගී වන සිසුන්ගේ ආරක්ෂාව අපි සම්පූර්ණයෙන්ම තහවුරු කරමු.',
+      'එසේම, මේ පිළිබඳ වැඩිදුර තොරතුරු ලබා ගැනීම සඳහා අප හා සම්බන්ධ වන ලෙසත්, ඔවුන්ගේ පැමිණීම තහවුරු කරන ලෙසත් කාරුණිකව ඉල්ලමු.',
+    ],
+    closing: 'මෙයට,',
+    signature: 'පී. අරුල් ප්‍රකාශ්\n(පාසල් සේවා අධ්‍යක්ෂ)',
+  },
+};
+
+const CONFIRMATION_ACK_COPY: Record<ConfirmationLanguage, string> = {
+  tamil: 'எனது மகன் / மகள் இம் முகாமிற்கு செல்ல அனுமதியளிக்கிறேன்.',
+  sinhala: 'මගේ පුතා / දියණිය මෙම කඳවුරට යාමට අවසර දෙමි.',
+};
+
 export default function RegistrationForm() {
   const [fullName, setFullName] = useState('');
   const [age, setAge] = useState('');
@@ -22,6 +54,8 @@ export default function RegistrationForm() {
   const [religion, setReligion] = useState('');
   const [invitedBy, setInvitedBy] = useState('');
   const [availableDays, setAvailableDays] = useState<string[]>([]);
+  const [confirmationLanguage, setConfirmationLanguage] = useState<ConfirmationLanguage | ''>('');
+  const [parentAcknowledged, setParentAcknowledged] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -39,6 +73,8 @@ export default function RegistrationForm() {
     setReligion('');
     setInvitedBy('');
     setAvailableDays([]);
+    setConfirmationLanguage('');
+    setParentAcknowledged(false);
   };
 
   const handleDayToggle = (day: string) => {
@@ -115,6 +151,11 @@ export default function RegistrationForm() {
           <p className="mt-2 text-sm text-ink-700">
             Fill in a camper&apos;s details below to save their spot.
           </p>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-ember-500/20 bg-ember-500/10 px-4 py-3 text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-ember-700">Camp fee</p>
+          <p className="mt-1 font-display text-3xl text-pine-900">Rs. 3,000</p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-7 space-y-4">
@@ -282,6 +323,92 @@ export default function RegistrationForm() {
             />
           </Field>
 
+          <div className="rounded-2xl border border-[#eee2c4] bg-white px-4 py-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-pine-700">
+                  Parent confirmation acknowledgment
+                </p>
+                <p className="mt-1 text-sm text-ink-700">
+                  Select either Tamil or Sinhala, then confirm that you have read and accepted the camp terms.
+                </p>
+              </div>
+              <span className="rounded-full bg-ember-500/10 px-3 py-1 text-xs font-semibold text-ember-700">
+                Required
+              </span>
+            </div>
+
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              <label
+                className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${confirmationLanguage === 'tamil'
+                    ? 'border-ember-500 bg-ember-500/10 text-pine-900'
+                    : 'border-[#eee2c4] bg-canvas-50 text-ink-700'
+                  }`}
+              >
+                <input
+                  type="radio"
+                  name="confirmationLanguage"
+                  value="tamil"
+                  required
+                  checked={confirmationLanguage === 'tamil'}
+                  onChange={() => setConfirmationLanguage('tamil')}
+                  className="h-4 w-4 border-[#eee2c4] text-ember-500 focus:ring-ember-500"
+                />
+                <span>Tamil</span>
+              </label>
+
+              <label
+                className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${confirmationLanguage === 'sinhala'
+                    ? 'border-ember-500 bg-ember-500/10 text-pine-900'
+                    : 'border-[#eee2c4] bg-canvas-50 text-ink-700'
+                  }`}
+              >
+                <input
+                  type="radio"
+                  name="confirmationLanguage"
+                  value="sinhala"
+                  required
+                  checked={confirmationLanguage === 'sinhala'}
+                  onChange={() => setConfirmationLanguage('sinhala')}
+                  className="h-4 w-4 border-[#eee2c4] text-ember-500 focus:ring-ember-500"
+                />
+                <span>Sinhala</span>
+              </label>
+            </div>
+
+            <div className="mt-4 space-y-3 rounded-xl bg-canvas-50 px-4 py-4 text-sm leading-relaxed text-ink-700">
+              {confirmationLanguage ? (
+                <>
+                  <p className="font-semibold text-pine-900">{CONFIRMATION_COPY[confirmationLanguage].greeting}</p>
+                  {CONFIRMATION_COPY[confirmationLanguage].paragraphs.map((para, i) => (
+                    <p key={i}>{para}</p>
+                  ))}
+                  <p>{CONFIRMATION_COPY[confirmationLanguage].closing}</p>
+                  <p className="whitespace-pre-line font-semibold text-pine-900">
+                    {CONFIRMATION_COPY[confirmationLanguage].signature}
+                  </p>
+                </>
+              ) : (
+                'Choose a language above to view the parent confirmation text.'
+              )}
+            </div>
+
+            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[#eee2c4] bg-canvas-50 px-4 py-3 text-sm text-ink-700">
+              <input
+                type="checkbox"
+                required
+                checked={parentAcknowledged}
+                onChange={(e) => setParentAcknowledged(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-[#eee2c4] text-ember-500 focus:ring-ember-500"
+              />
+              <span>
+                {confirmationLanguage
+                  ? CONFIRMATION_ACK_COPY[confirmationLanguage]
+                  : 'Select Tamil or Sinhala to view the acknowledgment tick text.'}
+              </span>
+            </label>
+          </div>
+
           <div>
             <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-pine-700">
               Free days available
@@ -292,9 +419,8 @@ export default function RegistrationForm() {
                 return (
                   <label
                     key={day}
-                    className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
-                      checked ? 'border-ember-500 bg-ember-500/10 text-pine-900' : 'border-[#eee2c4] bg-white text-ink-700'
-                    }`}
+                    className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${checked ? 'border-ember-500 bg-ember-500/10 text-pine-900' : 'border-[#eee2c4] bg-white text-ink-700'
+                      }`}
                   >
                     <input
                       type="checkbox"
