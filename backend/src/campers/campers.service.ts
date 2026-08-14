@@ -35,6 +35,14 @@ export class CampersService {
       where.area = query.area;
     }
 
+    if (query.age !== undefined) {
+      where.age = query.age;
+    }
+
+    if (query.gender) {
+      where.gender = { equals: query.gender, mode: 'insensitive' };
+    }
+
     if (query.search) {
       where.OR = [
         { fullName: { contains: query.search, mode: 'insensitive' } },
@@ -54,17 +62,29 @@ export class CampersService {
   }
 
   async stats() {
-    const [total, byArea] = await Promise.all([
+    const [total, byArea, byAge, byGender] = await Promise.all([
       this.prisma.camper.count(),
       this.prisma.camper.groupBy({
         by: ['area'],
         _count: { area: true },
+      }),
+      this.prisma.camper.groupBy({
+        by: ['age'],
+        _count: { age: true },
+        orderBy: { age: 'asc' },
+      }),
+      this.prisma.camper.groupBy({
+        by: ['gender'],
+        _count: { gender: true },
+        orderBy: { gender: 'asc' },
       }),
     ]);
 
     return {
       total,
       byArea: byArea.map((a) => ({ area: a.area, count: a._count.area })),
+      byAge: byAge.map((a) => ({ age: a.age, count: a._count.age })),
+      byGender: byGender.map((g) => ({ gender: g.gender, count: g._count.gender })),
     };
   }
 

@@ -13,6 +13,8 @@ export default function AdminPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [area, setArea] = useState<AreaValue | 'ALL'>('ALL');
+  const [gender, setGender] = useState<'ALL' | 'Male' | 'Female'>('ALL');
+  const [age, setAge] = useState<'ALL' | number>('ALL');
   const [state, setState] = useState<LoadState>('loading');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -29,6 +31,8 @@ export default function AdminPage() {
         fetchCampers({
           area: area === 'ALL' ? undefined : area,
           search: debouncedSearch || undefined,
+          gender: gender === 'ALL' ? undefined : gender,
+          age: age === 'ALL' ? undefined : age,
         }),
         fetchStats(),
       ]);
@@ -43,13 +47,35 @@ export default function AdminPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [area, debouncedSearch]);
+  }, [area, age, debouncedSearch, gender]);
 
   const countForArea = useMemo(() => {
     const map = new Map<string, number>();
     stats?.byArea.forEach((a) => map.set(a.area, a.count));
     return map;
   }, [stats]);
+
+  const ageOptions = useMemo(() => {
+    return stats?.byAge ?? [];
+  }, [stats]);
+
+  const filterSummary = useMemo(() => {
+    const parts: string[] = [];
+
+    if (gender !== 'ALL') {
+      parts.push(gender);
+    }
+
+    if (age !== 'ALL') {
+      parts.push(`Age ${age}`);
+    }
+
+    if (parts.length === 0) {
+      return 'All campers';
+    }
+
+    return parts.join(' · ');
+  }, [age, gender]);
 
   const busArrivedCount = useMemo(() => campers.filter((c) => c.busArrived).length, [campers]);
   const campArrivedCount = useMemo(() => campers.filter((c) => c.campArrived).length, [campers]);
@@ -121,8 +147,8 @@ export default function AdminPage() {
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
 
         <div className="mb-6 flex flex-col gap-3 sm:gap-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative w-full sm:max-w-xs">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative w-full lg:max-w-xs">
               <svg
                 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-pine-700/60"
                 viewBox="0 0 24 24"
@@ -139,17 +165,42 @@ export default function AdminPage() {
               />
             </div>
 
-            <button
-              type="button"
-              onClick={handleExportExcel}
-              disabled={state !== 'ready' || campers.length === 0}
-              className="inline-flex items-center justify-center rounded-full bg-pine-900 px-4 py-2.5 text-sm font-semibold text-canvas-50 transition hover:bg-pine-800 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Export to Excel
-            </button>
+            <div className="grid gap-3 sm:grid-cols-3 lg:w-auto">
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value as 'ALL' | 'Male' | 'Female')}
+                className="w-full rounded-full border-2 border-canvas-200 bg-white px-4 py-2.5 text-sm text-ink-900 focus:border-ember-500 focus:outline-none"
+              >
+                <option value="ALL">All genders</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+
+              <select
+                value={age}
+                onChange={(e) => setAge(e.target.value === 'ALL' ? 'ALL' : Number(e.target.value))}
+                className="w-full rounded-full border-2 border-canvas-200 bg-white px-4 py-2.5 text-sm text-ink-900 focus:border-ember-500 focus:outline-none"
+              >
+                <option value="ALL">All ages</option>
+                {ageOptions.map((item) => (
+                  <option key={item.age} value={item.age}>
+                    Age {item.age}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                disabled={state !== 'ready' || campers.length === 0}
+                className="inline-flex items-center justify-center rounded-full bg-pine-900 px-4 py-2.5 text-sm font-semibold text-canvas-50 transition hover:bg-pine-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Export to Excel
+              </button>
+            </div>
           </div>
 
-        <div className="mb-6 grid gap-3 sm:grid-cols-2">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_auto]">
           <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 shadow-sm">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-700">Bus arrived</p>
             <p className="mt-1 text-2xl font-semibold text-amber-900">{busArrivedCount}</p>
@@ -157,6 +208,26 @@ export default function AdminPage() {
           <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 shadow-sm">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-sky-700">Camp arrived</p>
             <p className="mt-1 text-2xl font-semibold text-sky-900">{campArrivedCount}</p>
+          </div>
+          <div className="sm:col-span-2 lg:col-span-1">
+            <div className="rounded-2xl border border-canvas-200 bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-pine-700">Matching campers</p>
+                  <p className="mt-1 text-sm text-ink-700">{filterSummary}</p>
+                </div>
+                <span className="rounded-full bg-canvas-100 px-3 py-1 text-xs font-semibold text-ink-700">
+                  {campers.length} found
+                </span>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-ink-700">
+                {gender !== 'ALL' && <span className="rounded-full bg-canvas-100 px-2.5 py-1">Gender: {gender}</span>}
+                {age !== 'ALL' && <span className="rounded-full bg-canvas-100 px-2.5 py-1">Age: {age}</span>}
+                {gender === 'ALL' && age === 'ALL' && (
+                  <span className="rounded-full bg-canvas-100 px-2.5 py-1">No gender or age filter</span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
         

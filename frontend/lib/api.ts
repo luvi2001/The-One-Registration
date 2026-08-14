@@ -32,10 +32,14 @@ export async function registerCamper(input: CreateCamperInput): Promise<Camper> 
 export async function fetchCampers(params: {
   area?: string;
   search?: string;
+  age?: number;
+  gender?: string;
 }): Promise<Camper[]> {
   const qs = new URLSearchParams();
   if (params.area) qs.set('area', params.area);
   if (params.search) qs.set('search', params.search);
+  if (typeof params.age === 'number') qs.set('age', String(params.age));
+  if (params.gender) qs.set('gender', params.gender);
   const res = await fetch(`${API_URL}/campers?${qs.toString()}`, {
     cache: 'no-store',
   });
@@ -45,6 +49,8 @@ export async function fetchCampers(params: {
 export interface CamperStats {
   total: number;
   byArea: { area: string; count: number }[];
+  byAge: { age: number; count: number }[];
+  byGender: { gender: string; count: number }[];
 }
 
 export async function fetchStats(): Promise<CamperStats> {
