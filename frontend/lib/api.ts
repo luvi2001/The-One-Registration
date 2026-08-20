@@ -29,6 +29,20 @@ export async function registerCamper(input: CreateCamperInput): Promise<Camper> 
   return handle<Camper>(res);
 }
 
+export async function fetchRegistrationStatus(): Promise<{ isOpen: boolean }> {
+  const res = await fetch(`${API_URL}/campers/registration-status`, { cache: 'no-store' });
+  return handle<{ isOpen: boolean }>(res);
+}
+
+export async function updateRegistrationStatus(isOpen: boolean): Promise<{ isOpen: boolean }> {
+  const res = await fetch(`${API_URL}/campers/registration-status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ isOpen }),
+  });
+  return handle<{ isOpen: boolean }>(res);
+}
+
 export async function fetchCampers(params: {
   area?: string;
   search?: string;

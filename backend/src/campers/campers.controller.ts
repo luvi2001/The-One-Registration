@@ -21,6 +21,16 @@ export class CampersController {
     return this.campersService.create(dto);
   }
 
+  @Get('registration-status')
+  registrationStatus() {
+    return this.campersService.registrationStatus();
+  }
+
+  @Patch('registration-status')
+  updateRegistrationStatus(@Body() body: { isOpen: boolean }) {
+    return this.campersService.updateRegistrationStatus(body.isOpen);
+  }
+
   @Get()
   findAll(@Query() query: QueryCamperDto) {
     return this.campersService.findAll(query);

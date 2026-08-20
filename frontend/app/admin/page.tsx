@@ -2,7 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { deleteCamper, fetchCampers, fetchStats, updateCamperStatus, CamperStats } from '@/lib/api';
+import {
+  deleteCamper,
+  fetchCampers,
+  fetchRegistrationStatus,
+  fetchStats,
+  updateCamperStatus,
+  updateRegistrationStatus,
+  CamperStats,
+} from '@/lib/api';
 import { AREAS, AreaValue, Camper, areaLabel } from '@/lib/types';
 
 type LoadState = 'loading' | 'ready' | 'error';
@@ -18,6 +26,8 @@ export default function AdminPage() {
   const [state, setState] = useState<LoadState>('loading');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [registrationOpen, setRegistrationOpen] = useState(true);
+  const [updatingRegistration, setUpdatingRegistration] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -27,7 +37,7 @@ export default function AdminPage() {
   async function load() {
     setState('loading');
     try {
-      const [campersData, statsData] = await Promise.all([
+      const [campersData, statsData, registrationStatus] = await Promise.all([
         fetchCampers({
           area: area === 'ALL' ? undefined : area,
           search: debouncedSearch || undefined,
@@ -35,12 +45,29 @@ export default function AdminPage() {
           age: age === 'ALL' ? undefined : age,
         }),
         fetchStats(),
+        fetchRegistrationStatus(),
       ]);
       setCampers(campersData);
       setStats(statsData);
+      setRegistrationOpen(registrationStatus.isOpen);
       setState('ready');
     } catch {
       setState('error');
+    }
+  }
+
+  async function handleRegistrationStatusChange() {
+    const nextState = !registrationOpen;
+    if (!nextState && !confirm('Close registration for new campers?')) return;
+
+    setUpdatingRegistration(true);
+    try {
+      const result = await updateRegistrationStatus(nextState);
+      setRegistrationOpen(result.isOpen);
+    } catch {
+      alert('Could not update registration status.');
+    } finally {
+      setUpdatingRegistration(false);
     }
   }
 
@@ -139,9 +166,26 @@ export default function AdminPage() {
           Camp Registration
         </p>
         <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl">Registration Desk</h1>
-        <p className="mt-1 text-xs text-canvas-100/80 sm:text-sm">
-          {stats ? `${stats.total} camper${stats.total === 1 ? '' : 's'} registered so far` : 'Loading totals…'}
-        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <p className="text-xs text-canvas-100/80 sm:text-sm">
+            {stats ? `${stats.total} camper${stats.total === 1 ? '' : 's'} registered so far` : 'Loading totals…'}
+          </p>
+          <button
+            type="button"
+            onClick={handleRegistrationStatusChange}
+            disabled={updatingRegistration}
+            className={`rounded-full px-4 py-2 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+              registrationOpen
+                ? 'bg-ember-500 text-white hover:bg-ember-600'
+                : 'bg-emerald-500 text-white hover:bg-emerald-600'
+            }`}
+          >
+            {updatingRegistration ? 'Updating…' : registrationOpen ? 'Close registration' : 'Reopen registration'}
+          </button>
+          <span className="text-xs font-semibold text-canvas-100/80">
+            {registrationOpen ? 'Registration open' : 'Registration closed'}
+          </span>
+        </div>
       </header>
 
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10">

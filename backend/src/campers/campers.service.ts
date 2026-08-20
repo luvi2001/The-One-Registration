@@ -1,4 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCamperDto } from './dto/create-camper.dto';
@@ -9,6 +14,16 @@ export class CampersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateCamperDto) {
+    const settings = await this.prisma.registrationSettings.upsert({
+      where: { id: 1 },
+      create: { id: 1 },
+      update: {},
+    });
+
+    if (!settings.isOpen) {
+      throw new BadRequestException('Registration is closed.');
+    }
+
     try {
       return await this.prisma.camper.create({
         data: {
@@ -26,6 +41,30 @@ export class CampersService {
       }
       throw new InternalServerErrorException('Unable to save camper registration.');
     }
+  }
+
+  async registrationStatus() {
+    const settings = await this.prisma.registrationSettings.upsert({
+      where: { id: 1 },
+      create: { id: 1 },
+      update: {},
+    });
+
+    return { isOpen: settings.isOpen };
+  }
+
+  async updateRegistrationStatus(isOpen: boolean) {
+    if (typeof isOpen !== 'boolean') {
+      throw new BadRequestException('isOpen must be a boolean.');
+    }
+
+    const settings = await this.prisma.registrationSettings.upsert({
+      where: { id: 1 },
+      create: { id: 1, isOpen },
+      update: { isOpen },
+    });
+
+    return { isOpen: settings.isOpen };
   }
 
   findAll(query: QueryCamperDto) {
