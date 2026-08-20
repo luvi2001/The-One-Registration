@@ -28,6 +28,7 @@ export default function HomePage() {
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-ember-600">Camp registration</p>
               <h1 className="mt-3 font-display text-4xl leading-none text-pine-900">Registration closed</h1>
               <p className="mt-3 text-sm text-ink-700">Registration is no longer available. Please contact the camp team for more information.</p>
+              <p className="mt-3 text-sm text-ink-700">075 258 2063</p>
             </div>
           ) : (
             <RegistrationForm />
